@@ -1,0 +1,295 @@
+use anudiplab;
+-- 1. Write a MySQL query to create a simple table countries including columns country_id, country_name and region_id.
+create table countries(country_id int,country_name varchar(25),region_id int);
+insert into countries values(101,'India',201);
+insert into countries values(101,'USA',202);
+insert into countries values(101,'JAPAN',203);
+select * from countries;
+
+-- 2. Write a MySQL query to create a simple table countries including columns country_id, country_name and region_id which is already exists.
+create table if not exists countries(country_id int,country_name varchar(25),region_id int);
+
+-- 3. Write a MySQL query to create the structure of a table dup_countries similar to countries.
+create table dup_countries like countries;
+
+-- 4. Write a MySQL query to create a duplicate copy of countries table including structure and data by name dup_countries.
+DROP TABLE IF EXISTS dup_countries;  
+CREATE TABLE dup_countries AS SELECT * FROM countries;
+select * from dup_countries;
+
+-- 5. Write a MySQL query to create a table countries set a constraint NULL.
+DROP TABLE IF EXISTS countries;  
+CREATE TABLE countries (
+    country_id INT, 
+    country_name VARCHAR(100) NULL, 
+    region_id INT NULL
+);
+
+-- 6. Write a MySQL query to create a table named jobs including columns job_id, job_title, min_salary, max_salary and check whether the max_salary amount exceeding the upper limit 25000.
+create table jobs(job_id int, job_title varchar(25), min_salary double , max_salary double check (max_salary < 25000));
+insert into jobs values(101,'manager',10000,24000);
+insert into jobs values(101,'employee',10000,10000);
+insert into jobs values(101,'employee',10000,14000);
+select * from jobs;
+
+-- 7. Write a MySQL query to create a table named countries including columns country_id, country_name and region_id and make sure that no countries except Italy, India and China will be entered in the table.
+DROP TABLE IF EXISTS countries; 
+CREATE TABLE countries (
+    country_id INT PRIMARY KEY,
+    country_name VARCHAR(50) NOT NULL CHECK (country_name IN ('Italy', 'India', 'China')),
+    region_id INT NOT NULL
+);
+select * from countries;
+
+-- 8. Write a MySQL query to create a table named job_histry including columns employee_id, start_date, end_date, job_id and department_id and make sure that the value against column end_date will be entered at the time of insertion to the format like '--/--/----'.
+CREATE TABLE job_histry (
+    employee_id INT PRIMARY KEY,
+    start_date DATE NOT NULL,
+    end_date VARCHAR(10) NOT NULL CHECK (end_date REGEXP '^[0-9]{2}/[0-9]{2}/[0-9]{4}$'),
+    job_id VARCHAR(10) NOT NULL,
+    department_id INT NOT NULL
+);
+INSERT INTO job_histry (employee_id, start_date, end_date, job_id, department_id) 
+VALUES 
+(1, '2024-01-10', '10/02/2025', 'DEV001', 101),
+(2, '2023-05-20', '15/08/2026', 'HR002', 102),
+(3, '2022-09-15', '25/12/2024', 'FIN003', 103);
+select * from job_histry;
+
+-- 9. Write a MySQL query to create a table named countries including columns country_id,country_name and region_id and make sure that no duplicate data against column country_id will be allowed at the time of insertion.
+DROP TABLE IF EXISTS countries;
+
+CREATE TABLE countries (
+    country_id INT PRIMARY KEY, 
+    country_name VARCHAR(50), 
+    region_id INT
+);
+
+-- 10. Write a MySQL query to create a table named jobs including columns job_id, job_title, min_salary and max_salary, and make sure that, the default value for job_title is blank and min_salary is 8000 and max_salary is NULL will be entered automatically at the time of insertion if no value assigned for the specified columns.
+DROP TABLE IF EXISTS jobs;
+
+CREATE TABLE jobs (
+    job_id VARCHAR(10) PRIMARY KEY, 
+    job_title VARCHAR(35) DEFAULT '', 
+    min_salary DECIMAL(6,0) DEFAULT 8000, 
+    max_salary DECIMAL(6,0) DEFAULT NULL
+);
+
+-- 11. Write a MySQL query to create a table named countries including columns country_id, country_name and region_id and make sure that the country_id column will be a key field which will not contain any duplicate data at the time of insertion.
+DROP TABLE IF EXISTS countries;
+
+CREATE TABLE countries (
+    country_id INT PRIMARY KEY, 
+    country_name VARCHAR(50), 
+    region_id INT
+);
+
+-- 12. Write a MySQL query to create a table countries including columns country_id, country_name and region_id and make sure that the column country_id will be unique and store an auto incremented value.
+DROP TABLE IF EXISTS countries;
+
+CREATE TABLE countries (
+    country_id INT AUTO_INCREMENT PRIMARY KEY, 
+    country_name VARCHAR(50), 
+    region_id INT
+);
+
+-- 13. Write a MySQL query to create a table countries including columns country_id, country_name and region_id and make sure that the combination of columns country_id and region_id will be unique.
+DROP TABLE IF EXISTS countries;
+
+CREATE TABLE countries (
+    country_id INT, 
+    country_name VARCHAR(50), 
+    region_id INT, 
+    UNIQUE (country_id, region_id)
+);
+
+-- 14. Write a MySQL query to create a table job_history including columns employee_id, start_date, end_date, job_id and department_id and make sure that, the employee_id column does not contain any duplicate value at the time of insertion and the foreign key column job_id contain only those values which are exists in the jobs table.
+DROP TABLE IF EXISTS job_history;
+
+CREATE TABLE job_history (
+    employee_id INT PRIMARY KEY, 
+    start_date DATE, 
+    end_date DATE, 
+    job_id VARCHAR(10), 
+    department_id INT,
+    FOREIGN KEY (job_id) REFERENCES jobs(job_id)
+);
+
+-- 15. Write a  MySQL query to create a table employees including columns employee_id, first_name, last_name, email, phone_number hire_date, job_id, salary, commission, manager_id and department_id and make sure that, the employee_id column does not contain any duplicate value at the time of insertion and the foreign key columns combined by department_id and manager_id columns contain only those unique combination values, which combinations are exists in the departments table.
+-- Drop tables if they exist
+DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS departments;
+
+-- Create departments table with a composite primary key
+CREATE TABLE departments (department_id INT,manager_id INT,PRIMARY KEY (department_id, manager_id) );
+
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY, 
+    first_name VARCHAR(50), 
+    last_name VARCHAR(50), 
+    email VARCHAR(100), 
+    phone_number VARCHAR(20), 
+    hire_date DATE, 
+    job_id VARCHAR(10), 
+    salary DECIMAL(10,2), 
+    commission DECIMAL(5,2), 
+    manager_id INT, 
+    department_id INT, 
+    FOREIGN KEY (job_id) REFERENCES jobs(job_id),
+    FOREIGN KEY (department_id, manager_id) REFERENCES departments(department_id, manager_id)
+);
+
+-- ##########################################################
+
+-- 1. Write a MYSQL statement to rename the table countries to country_new.
+rename table  countries to country_new;
+select * from country_new;
+
+-- 2. Write a MYSQL statement to add a column region_id to the table locations.
+ALTER TABLE departments ADD COLUMN region_id INT;
+
+-- 3. Write a MYSQL statement to add a columns ID as the first column of the table locations.
+ALTER TABLE jobs ADD COLUMN ID INT first;
+
+-- 4. Write a MYSQL statement to add a column region_id after state_province to the table locations.Click me to see the solution
+CREATE TABLE locations (
+    location_id INT PRIMARY KEY,
+    street_address VARCHAR(255),
+    postal_code VARCHAR(20),
+    city VARCHAR(100),
+    state_province VARCHAR(100),
+    country_id VARCHAR(10)
+);
+ALTER TABLE locations ADD COLUMN region_id INT AFTER state_province;
+
+
+-- 5. Write a MYSQL statement change the data type of the column country_id to integer in the table locations.
+ALTER TABLE locations MODIFY COLUMN country_id INT;
+
+-- 6. Write a MYSQL statement to drop the column city from the table locations.
+ALTER TABLE locations DROP COLUMN city;
+
+-- 7. Write a MYSQL statement to change the name of the column state_province to state, keeping the data type and size same.
+ALTER TABLE locations CHANGE COLUMN state_province state VARCHAR(255);
+
+-- 8. Write a MYSQL statement to add a primary key for the columns location_id in the locations table.
+ALTER TABLE locations ADD PRIMARY KEY (location_id);
+
+
+
+
+-- ----------------------------------------------------------
+
+-- 1. Write a query to display the names (first_name, last_name) using alias name "First Name", "Last Name"
+CREATE TABLE employee (
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    department_id INT,
+    salary DECIMAL(10,2)
+);
+SELECT first_name AS "First Name", last_name AS "Last Name" FROM employee;
+
+
+-- 2. Write a query to get unique department ID from employee table.
+SELECT DISTINCT department_id FROM employee;
+
+-- 3. Write a query to get all employee details from the employee table order by first name, descending.
+SELECT * FROM employee ORDER BY first_name DESC;
+
+-- 4. Write a query to get the names (first_name, last_name), salary, PF of all the employees (PF is calculated as 15% of salary).
+SELECT first_name, last_name, salary, (salary * 0.15) AS PF FROM employee;
+
+-- 5. Write a query to get the employee ID, names (first_name, last_name), salary in ascending order of salary.
+SELECT employee_id, first_name, last_name, salary FROM employee ORDER BY salary ASC;
+
+-- 6. Write a query to get the total salaries payable to employees.
+SELECT SUM(salary) AS Total_Salaries FROM employee;
+
+-- 7. Write a query to get the maximum and minimum salary from employees table.
+SELECT MAX(salary) AS Max_Salary, MIN(salary) AS Min_Salary FROM employee;
+
+-- 8. Write a query to get the average salary and number of employees .
+SELECT AVG(salary) AS Average_Salary, COUNT(*) AS Number_of_Employees FROM employee;
+
+-- 9. Write a query to get the number of employees working with the company.
+SELECT COUNT(*) AS Total_Employees FROM employee;
+drop table employee;
+
+-- ---------------------------
+-- 1. Write a query to display the name (first_name, last_name) and salary for all employees whose salary is not in the range $10,000 through $15,000.
+CREATE TABLE employee (
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    department_id INT,
+    salary DECIMAL(10,2),
+    job_title VARCHAR(100),
+    hire_date DATE
+);
+
+INSERT INTO employee (employee_id, first_name, last_name, department_id, salary, job_title, hire_date) VALUES
+(1, 'Ronit', 'Smith', 30, 12000, 'Programmer', '1987-06-15'),
+(2, 'Amish', 'Brown', 100, 9500, 'Manager', '1985-09-23'),
+(3, 'Mihir', 'Clark', 30, 16000, 'Shipping Clerk', '1990-11-05'),
+(4, 'Saransh', 'Davis', 50, 11000, 'Programmer', '1987-04-20'),
+(5, 'sejal', 'Carter', 30, 10500, 'Analyst', '1988-02-10'),
+(6, 'Chhya', 'Benson', 100, 14500, 'Developer', '1992-08-17'),
+(7, 'Deva', 'Evans', 20, 7500, 'Programmer', '1987-01-29'),
+(8, 'prachi', 'Reed', 40, 8900, 'Shipping Clerk', '1986-07-11'),
+(9, 'sayali', 'Johnson', 30, 14000, 'Clerk', '1987-12-19'),
+(10, 'srushti', 'Foster', 60, 4500, 'Shipping Clerk', '1995-03-07');
+SELECT first_name, last_name, salary 
+FROM employee 
+WHERE salary NOT BETWEEN 10000 AND 15000;
+
+
+-- 2. Write a query to display the name (first_name, last_name) and department ID of all employees in departments 30 or 100 in ascending order.
+SELECT first_name, last_name, department_id 
+FROM employee 
+WHERE department_id IN (30, 100) 
+ORDER BY department_id ASC;
+
+-- 3. Write a query to display the name (first_name, last_name) and salary for all employees whose salary is not in the range $10,000 through $15,000 and are in department 30 or 100.
+SELECT first_name, last_name, salary 
+FROM employee 
+WHERE salary NOT BETWEEN 10000 AND 15000 
+AND department_id IN (30, 100);
+
+-- 4. Write a query to display the name (first_name, last_name) and hire date for all employees who were hired in 1987.
+SELECT first_name, last_name, hire_date 
+FROM employee 
+WHERE YEAR(hire_date) = 1987;
+
+-- 5. Write a query to display the first_name of all employees who have both "b" and "c" in their first name.
+SELECT first_name 
+FROM employee 
+WHERE first_name LIKE '%s%' AND first_name LIKE '%c%';
+
+-- 6. Write a query to display the last name, job, and salary for all employees whose job is that of a Programmer or a Shipping Clerk, and whose salary is not equal to $4,500, $10,000, or $15,000.
+SELECT last_name, job_title, salary 
+FROM employee 
+WHERE job_title IN ('Programmer', 'Shipping Clerk') 
+AND salary NOT IN (4500, 10000, 15000);
+
+-- 7. Write a query to display the last name of employees whose names have exactly 6 characters.
+SELECT last_name 
+FROM employee 
+WHERE LENGTH(last_name) = 6;
+
+-- 8. Write a query to display the last name of employees having 'e' as the third character.
+SELECT last_name 
+FROM employee 
+WHERE last_name LIKE '__e%';
+
+-- 9. Write a query to display the jobs/designations available in the employees table.
+SELECT DISTINCT job_title FROM employee;
+
+-- 10. Write a query to display the name (first_name, last_name), salary and PF (15% of salary) of all employees.
+SELECT first_name, last_name, salary, (salary * 0.15) AS PF 
+FROM employee;
+
+
+
+
+
